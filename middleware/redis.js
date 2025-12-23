@@ -14,9 +14,15 @@ redis.on("connect", () => {
   console.log("Redis Connected");
 });
 
-const getCachedData = (key) => {
+const getCachedData = (staticKey) => {
     return async (req, res, next) => {
         try {
+            const key = staticKey || req.cacheKey;
+
+            if (!key) {
+                return next();
+            }
+
             const cached = await redis.get(key);
             if (cached) {
                 console.log(`Get ${key} from cache`);
@@ -24,7 +30,7 @@ const getCachedData = (key) => {
                     [key.split(':')[0]]: JSON.parse(cached),
                 });
             }
-            req.cacheKey = key;
+
             next();
         } catch (error) {
             console.error('Cache error:', error);
@@ -122,5 +128,6 @@ const responseCache = (ttl = 60) => {
         next();
     };
 };
+
 
 module.exports = { redis, getCachedData, rateLimiter, requestLogger, apiKeyAuth, responseCache };
