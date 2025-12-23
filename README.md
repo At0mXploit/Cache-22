@@ -26,7 +26,49 @@ const redis = new Redis({
 ```bash
 npm start
 ```
+## Middleware Features:
+#### Caching (getCachedData)
+- Automatic Redis caching
+- 30-second TTL for products
+- 5-minute TTL for orders
+#### Rate Limiting (rateLimiter)
+- IP-based rate limiting
+- Configurable limits per endpoint
+- Returns 429 when exceeded
+#### Request Logging (requestLogger)
+- Logs all requests to Redis
+- Stores 7 days of logs
+- Includes response time, IP, user agent
+#### API Key Authentication (apiKeyAuth)
+- Protects admin routes
+- Requires `x-api-key` header
+- Keys stored in Redis set
+#### Response Caching (responseCache)
+- Caches entire API responses
+- Works with dynamic routes
+- Skips non-200 responses
 
+```bash
+# Test basic endpoints
+curl http://localhost:3000/
+curl http://localhost:3000/health
+curl http://localhost:3000/stats
+
+# Test product endpoints (observe caching)
+curl http://localhost:3000/products
+curl http://localhost:3000/product/1
+curl http://localhost:3000/order/45
+
+# Clear cache
+curl http://localhost:3000/clear
+
+# Generate API key
+curl -X POST http://localhost:3000/api-key
+
+# View logs (replace YOUR_API_KEY)
+curl -H "x-api-key: YOUR_API_KEY" http://localhost:3000/admin/logs
+```
+## So What the fuck is Redis ?
 Redis (Remote Dictionary Server) is an open-source, in-memory key-value data store that can be used as a database, cache, and message broker. It's known for its blazing-fast performance (microsecond response times) because data is stored primarily in RAM.
 
 Redis isn't just simple key-value strings:
@@ -164,5 +206,6 @@ CONFIG GET *       # All config (huge output)
 CONFIG GET port    # Specific config
 CONFIG GET requirepass  # Check if password set
 ```
+
 
 ---
