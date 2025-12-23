@@ -1,6 +1,22 @@
 # Cache-22
 
 A Node.js Express server with Redis caching, rate limiting, and monitoring features.
+## Live Test
+
+```bash
+$ echo "First request (should be cache miss):"
+curl -w "Response Time: %{time_total}s\n" -s https://cache-22.onrender.com/product/1
+
+First request (should be cache miss):
+{"product":{"id":"1","name":"Product 1","price":93}}Response Time: 4.942013s
+
+$ echo -e "\nSecond request (should be cache hit):"
+curl -w "Response Time: %{time_total}s\n" -s https://cache-22.onrender.com/product/1
+
+Second request (should be cache hit):
+{"product":{"id":"1","name":"Product 1","price":93}}Response Time: 0.665871s
+```
+From `4` sec to `0.6` sec LFG!
 ## Configuration
 ```bash
 server/
@@ -209,3 +225,4 @@ CONFIG GET requirepass  # Check if password set
 
 
 ---
+
